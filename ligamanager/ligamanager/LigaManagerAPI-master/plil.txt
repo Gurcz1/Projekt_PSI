@@ -1,0 +1,74 @@
+Opis Ogólny i Cel
+Projekt polega na stworzeniu backendowego serwisu (REST API) służącego do kompleksowego zarządzania amatorskimi ligami sportowymi. Celem jest dostarczenie scentralizowanej platformy, która ułatwi organizatorom i uczestnikom tworzenie rozgrywek, zarządzanie drużynami, śledzenie terminarzy oraz automatyczne obliczanie tabel wyników.
+
+Aplikacja ma rozwiązać typowe problemy organizacyjne (np. ręczne liczenie punktów, ustalanie kalendarza gier) poprzez automatyzację logiki biznesowej po stronie serwera.
+
+2. Kluczowe Założenia Techniczne
+Architektura aplikacji będzie ściśle oparta o materiały z zajęć, demonstrując implementację nowoczesnych serwisów internetowych.
+
+Podejście asynchroniczne: Cały serwis będzie działał w oparciu o asyncio, aby zapewnić wysoką wydajność, szczególnie w operacjach wejścia/wyjścia (I/O), takich jak zapytania do bazy danych.
+
+Architektura Wielowarstwowa (Cebulowa): Projekt będzie miał wyraźny podział odpowiedzialności:
+
+Warstwa Prezentacji: Endpointy REST API (FastAPI) odpowiedzialne za przyjmowanie żądań HTTP i zwracanie odpowiedzi.
+
+Warstwa Usług (Services): Serce aplikacji, zawierające całą logikę biznesową (np. obliczanie tabeli, weryfikacja wyników).
+
+Warstwa Repozytorium: Abstrakcja dostępu do danych, zarządzająca komunikacją z bazą.
+
+Warstwa Domeny: Modele danych (np. League, Team, Match).
+
+Baza Danych: Wykorzystanie relacyjnej bazy danych (np. PostgreSQL) z asynchronicznym sterownikiem (np. asyncpg), aby nie blokować pętli zdarzeń.
+
+Konteneryzacja: Aplikacja oraz jej zależności (jak baza danych) zostaną uruchomione za pomocą Docker i docker-compose, co zapewni spójne i powtarzalne środowisko.
+
+Bezpieczeństwo: Uwierzytelnianie użytkowników będzie realizowane za pomocą tokenów JWT (OAuth2).
+
+3. Główne Funkcjonalności
+Aplikacja będzie udostępniać zestaw endpointów REST API pozwalających na:
+
+Funkcjonalności Podstawowe
+Zarządzanie Użytkownikami (Uwierzytelnianie)
+
+Rejestracja konta (/auth/register).
+
+Logowanie i otrzymywanie tokenu JWT (/auth/login).
+
+Zarządzanie Ligami i Drużynami
+
+Tworzenie nowej ligi przez zalogowanego użytkownika (podanie nazwy, miasta, dyscypliny).
+
+Listowanie publicznych lig (z opcją filtrowania po mieście/dyscyplinie).
+
+Dołączanie drużyny do wybranej ligi.
+
+Zarządzanie Meczami i Wynikami
+
+Ręczne dodawanie meczów do terminarza przez administratora ligi.
+
+Wprowadzanie wyniku dla zakończonego meczu.
+
+Publiczne wyświetlanie tabeli wyników dla ligi (punkty, wygrane, przegrane).
+
+Funkcjonalności Zaawansowane (Nietrywialne)
+Automatyczne Generowanie Terminarza
+
+Endpoint (POST /leagues/{id}/generate-schedule) wyzwalający w Warstwie Usług algorytm "każdy z każdym" (round-robin), który automatycznie tworzy i zapisuje kompletny kalendarz meczów dla wszystkich drużyn w lidze.
+
+System Weryfikacji Wyników
+
+Wprowadzenie wyniku przez kapitana jednej drużyny zmienia status meczu na "Oczekujący na akceptację".
+
+Dopiero potwierdzenie wyniku przez kapitana drużyny przeciwnej (PATCH /matches/{id}/accept-score) uruchamia w serwisie logikę przeliczania tabeli ligowej.
+
+System Zaproszeń do Ligi Prywatnej
+
+Administrator ligi może oznaczyć ligę jako "prywatną" i generować jednorazowe, ograniczone czasowo tokeny zaproszeń.
+
+Dołączenie do takiej ligi jest możliwe tylko poprzez podanie ważnego tokenu (POST /leagues/accept-invite/{token}).
+
+Archiwizacja Sezonów
+
+Administrator ligi może ręcznie "zamknąć" sezon (lub dzieje się to automatycznie po rozegraniu wszystkich meczów).
+
+Zakończone ligi otrzymują status "Zarchiwizowana" i znikają z domyślnej listy lig, ale pozostają dostępne do wglądu w osobnym archiwum (GET /leagues/archive).
