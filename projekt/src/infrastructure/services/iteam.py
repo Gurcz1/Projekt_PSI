@@ -7,7 +7,7 @@ from typing import Iterable
 from src.core.domain.league import Team, TeamIn
 
 
-class ICountryService(ABC):
+class ITeamService(ABC):
     """An abstract class representing protocol of team repository."""
 
     @abstractmethod

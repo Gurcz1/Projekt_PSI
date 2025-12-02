@@ -27,7 +27,7 @@ class LeagueIn(BaseModel):
 
 class LeagueBroker(LeagueIn):
     """A broker class including admin in the model."""
-    admin_id: UUID1
+    owner_id: int
 
 
 class League(LeagueBroker):
@@ -38,4 +38,23 @@ class League(LeagueBroker):
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
+class LeagueUpdate(BaseModel):
+    """Model for updating a league."""
+    name: str | None = None
+    city: str | None = None
+    sport_type: SportType | None = None
+    is_private: bool | None = None
 
+
+class TeamIn(BaseModel):
+    """An input team model."""
+    name: str
+    league_id: int
+
+
+class Team(TeamIn):
+    """The team model class."""
+    id: int
+    captain_id: int
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")

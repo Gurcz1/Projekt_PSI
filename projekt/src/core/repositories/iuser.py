@@ -1,17 +1,19 @@
 """A repository for user entity."""
 
-from abc import ABC, abstractmethod 
 
-from pydantic import UUID1
+from abc import ABC, abstractmethod
+from typing import Any
 
-from src.core.domain.user import UserIn, User
+from pydantic import UUID5
+
+from src.core.domain.user import UserIn
 
 
 class IUserRepository(ABC):
     """An abstract repository class for user."""
 
     @abstractmethod
-    async def register_user(self, user: UserIn) -> User | None:
+    async def register_user(self, user: UserIn) -> Any | None:
         """A method registering new user.
 
         Args:
@@ -20,8 +22,9 @@ class IUserRepository(ABC):
         Returns:
             Any | None: The new user object.
         """
+
     @abstractmethod
-    async def get_by_uuid(self, uuid: UUID1) -> User | None:
+    async def get_by_uuid(self, uuid: UUID5) -> Any | None:
         """A method getting user by UUID.
 
         Args:
@@ -32,7 +35,7 @@ class IUserRepository(ABC):
         """
 
     @abstractmethod
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> Any | None:
         """A method getting user by email.
 
         Args:
