@@ -4,14 +4,14 @@ from abc import ABC, abstractmethod
 
 from typing import Iterable
 
-from src.core.domain.league import Team, TeamIn
+from src.core.domain.team import Team, TeamBroker, TeamIn
 
 
 class ITeamService(ABC):
     """An abstract class representing protocol of team repository."""
 
     @abstractmethod
-    async def get_team_by_id(self, country_id: int) -> Team | None:
+    async def get_team_by_id(self, team_id: int) -> Team | None:
         """The abstract getting a team from the repository.
 
         Args:
@@ -45,11 +45,11 @@ class ITeamService(ABC):
         """
 
     @abstractmethod
-    async def add_team(self, data: TeamIn) -> None:
+    async def create_team(self, data: TeamBroker) -> None:
         """The abstract adding new team to the repository.
 
         Args:
-            data (TeamIn): The attributes of the team.
+            data (TeamBroker): The attributes of the team. 
         """
 
     @abstractmethod

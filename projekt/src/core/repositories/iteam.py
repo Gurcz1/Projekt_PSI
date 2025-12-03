@@ -2,9 +2,9 @@
 
 
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Iterable, Any
 
-from src.core.domain.league import Team, TeamBroker, TeamIn
+from src.core.domain.team import Team, TeamBroker, TeamIn
 
 class ITeamRepository(ABC):
 
@@ -26,7 +26,7 @@ class ITeamRepository(ABC):
          """"""
     
     @abstractmethod
-    async def create_team(self, data: TeamBroker) -> Team | None:
+    async def create_team(self, data: TeamBroker) -> Any | None:
         """"""
     
 

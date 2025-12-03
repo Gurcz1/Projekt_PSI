@@ -45,16 +45,3 @@ class LeagueUpdate(BaseModel):
     sport_type: SportType | None = None
     is_private: bool | None = None
 
-
-class TeamIn(BaseModel):
-    """An input team model."""
-    name: str
-    league_id: int
-
-
-class Team(TeamIn):
-    """The team model class."""
-    id: int
-    captain_id: int
-
-    model_config = ConfigDict(from_attributes=True, extra="ignore")

@@ -9,7 +9,7 @@ class TeamIn(BaseModel):
 
 class TeamBroker(TeamIn):
     """A broker class including user in the model."""
-    captain_id: UUID1
+    captain_id: int
 
 
 class Team(TeamBroker):

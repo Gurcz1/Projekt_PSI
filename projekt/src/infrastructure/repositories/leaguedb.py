@@ -29,6 +29,7 @@ class LeagueRepository(ILeagueRepository):
         league_data['status'] = LeagueStatus.ACTIVE.value
         query = league_table.insert().values(**league_data)
         new_league_id = await database.execute(query)
+        
         return await self.get_by_id(new_league_id)
 
     async def get_all_public(self) -> List[LeagueDTO]:
