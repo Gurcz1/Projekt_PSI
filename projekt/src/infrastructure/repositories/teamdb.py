@@ -100,7 +100,7 @@ class TeamRepository(ITeamRepository):
     async def update_team(
         self,
         team_id: int,
-        data: TeamIn
+        data: TeamBroker,
     ) -> Any | None:
         """The abstract updating country data in the data storage.
 

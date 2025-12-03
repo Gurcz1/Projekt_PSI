@@ -57,3 +57,71 @@ async def create_team(
         )
 
     return new_team.model_dump()
+
+@router.get("/all", response_model=Iterable[Team], status_code=200)
+@inject
+async def get_all_teams(
+    service: ITeamService = Depends(Provide[Container.team_service]),
+) -> Iterable:
+    
+    teams = await service.get_all_teams()
+    
+    return teams
+
+@router.get("/{team_id}", response_model=Team, status_code=200)
+@inject
+async def get_team_by_id(
+    team_id: int,
+    service: ITeamService = Depends(Provide[Container.team_service]),
+) -> dict:
+    
+    if team := await service.get_team_by_id(team_id=team_id):
+        return team.model_dump()
+
+    raise HTTPException(status_code=404, detail="Team not found")
+
+@router.get(
+    "/league/{league_id}",
+    response_model=list[Team],
+    status_code=200,
+)
+@inject
+async def get_team_by_league(
+    league_id: int,
+    service: ITeamService = Depends(Provide[Container.team_service]),
+) -> Iterable:
+    
+    teams = await service.get_teams_by_league(league_id)
+    
+    return teams
+
+@router.put("/{team_id}", response_model=Team, status_code=201)
+@inject
+async def update_team(
+    team_id: int,
+    updated_team: TeamIn,
+    service: ITeamService = Depends(Provide[Container.team_service]),
+) -> dict:
+    
+    if await service.get_team_by_id(team_id=team_id):
+        new_updated_team = await service.update_team(
+            team_id=team_id,
+            data=updated_team,
+        )
+        return new_updated_team.model_dump() if new_updated_team else {}
+    
+    raise HTTPException(status_code=404, detail="Team not found")
+
+@router.delete("/{team_id}", status_code=204)
+@inject
+async def delete_team(
+    team_id: int,
+    service: ITeamService = Depends(Provide[Container.team_service]),
+) -> None:
+    
+    if await service.get_team_by_id(team_id=team_id):
+        await service.delete_team(team_id)
+        
+        return
+    
+    raise HTTPException(status_code=404, detail="Team not found")
