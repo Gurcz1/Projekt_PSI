@@ -123,6 +123,9 @@ class LeagueRepository(ILeagueRepository):
         Returns:
             LeagueDTO | None: The updated league object with owner information.
         """
+        if not await self._get_league_by_id(league_id):
+            return None
+            
         query = league_table \
             .update() \
             .where(league_table.c.id == league_id) \
@@ -140,7 +143,7 @@ class LeagueRepository(ILeagueRepository):
         Returns:
             bool: True if deleted successfully.
         """
-        if await self.get_by_id(league_id):
+        if await self._get_league_by_id(league_id):
             query = league_table \
                 .delete() \
                 .where(league_table.c.id == league_id)
@@ -165,19 +168,17 @@ class LeagueRepository(ILeagueRepository):
             League | None: The updated league details.
         """
 
-        if await self.get_by_id(league_id):
-            query = (
-                league_table.update()
-                .where(league_table.c.id == league_id)
-                .values(**data.model_dump())
-            )
-            await database.execute(query)
+        if not await self._get_league_by_id(league_id):
+            return None
+            
+        query = (
+            league_table.update()
+            .where(league_table.c.id == league_id)
+            .values(**data.model_dump())
+        )
+        await database.execute(query)
 
-            league = await self.get_by_id(league_id)
-
-            return league
-
-        return None
+        return await self.get_by_id(league_id)
 
     async def get_by_city(self, city: str) -> List[LeagueDTO]:
         """Get leagues by city name.
@@ -205,3 +206,20 @@ class LeagueRepository(ILeagueRepository):
         leagues = await database.fetch_all(query)
 
         return [LeagueDTO.from_record(league) for league in leagues]
+
+    async def _get_league_by_id(self, league_id: int) -> Record | None:
+        """A private method getting league from the DB based on its ID.
+        
+        Args:
+            league_id (int): The ID of the league.
+            
+        Returns:
+            Record | None: The raw database record.
+        """
+        query = (
+            league_table.select()
+            .where(league_table.c.id == league_id)
+        )
+        return await database.fetch_one(query)
+
+

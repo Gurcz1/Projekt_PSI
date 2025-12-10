@@ -63,7 +63,14 @@ class TeamRepository(ITeamRepository):
         return Team(**dict(new_team)) if new_team else None
 
     async def get_team_by_id(self, team_id: int) -> Any | None:
+        """The method getting team by ID.
 
+        Args:
+            team_id (int): The ID of the team.
+
+        Returns:
+            Any | None: The team object with owner information.
+        """
         team = await self._get_team_by_id(team_id)
 
         return Team(**dict(team)) if team else None
@@ -79,11 +86,10 @@ class TeamRepository(ITeamRepository):
         self,
         league_id: int,
     ) -> Iterable[Any]:
-        """The abstract getting all provided continent's countries
-            from the data storage.
+        """The method getting all teams by league ID.
 
         Args:
-            continent_id (int): The id of the continent.
+            league_id (int): The ID of the league.
 
         Returns:
             Iterable[Any]: The collection of the countries.
@@ -102,17 +108,17 @@ class TeamRepository(ITeamRepository):
         team_id: int,
         data: TeamBroker,
     ) -> Any | None:
-        """The abstract updating country data in the data storage.
+        """The method updating team data in the data storage.
 
         Args:
-            country_id (int): The country id.
-            data (CountryIn): The attributes of the country.
+            team_id (int): The ID of the team.
+            data (TeamIn): The attributes of the team.
 
         Returns:
             Any | None: The updated country.
         """
 
-        if self._get_team_by_id(team_id):
+        if await self._get_team_by_id(team_id):
             query = (
                 team_table.update()
                 .where(team_table.c.id == team_id)
@@ -127,8 +133,15 @@ class TeamRepository(ITeamRepository):
         return None
 
     async def delete_team(self, team_id: int) -> bool:
+        """The method deleting a team from the data storage.
 
-        if self._get_team_by_id(team_id):
+        Args:
+            team_id (int): The ID of the team.
+
+        Returns:
+            bool: True if deleted successfully.
+        """
+        if await self._get_team_by_id(team_id):
             query = team_table \
                 .delete() \
                 .where(team_table.c.id == team_id)
@@ -139,10 +152,10 @@ class TeamRepository(ITeamRepository):
         return False
 
     async def _get_team_by_id(self, team_id: int) -> Record | None:
-        """A private method getting airport from the DB based on its ID.
+        """A private method getting team from the DB based on its ID.
 
         Args:
-            airport_id (int): The ID of the airport.
+            team_id (int): The ID of the team.
 
         Returns:
             Any | None: Airport record if exists.

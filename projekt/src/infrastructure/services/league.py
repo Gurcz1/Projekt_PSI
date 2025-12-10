@@ -6,19 +6,28 @@ from fastapi import HTTPException, status
 from src.infrastructure.dto.leaguedto import LeagueDTO
 from src.core.domain.league import League, LeagueBroker
 from src.core.repositories.ileague import ILeagueRepository
+from src.core.repositories.imatch import IMatchRepository
+from src.core.repositories.iteam import ITeamRepository
 from src.infrastructure.services.ileague import ILeagueService
 
 
 class LeagueService(ILeagueService):
     """An implementation of service class for league."""
 
-    def __init__(self, repository: ILeagueRepository) -> None:
+    def __init__(
+        self, 
+        repository: ILeagueRepository, 
+        match_repository: IMatchRepository, 
+        team_repository: ITeamRepository
+    ) -> None:
         """The initializer of the `league service`.
 
         Args:
             repository (ILeagueRepository): The reference to the repository.
         """
         self._repository = repository
+        self._match_repository = match_repository
+        self._team_repository = team_repository
 
     async def add_league(self, data: LeagueBroker) -> LeagueDTO | None:
         """A method creating a new league.
@@ -146,3 +155,39 @@ class LeagueService(ILeagueService):
             Iterable[LeagueDTO]: A list of archived leagues.
         """
         return await self._repository.get_all_archived()
+
+    async def get_standings(self, league_id: int) -> Iterable[Any]:
+
+        teams = await self.team_repository.get_league_by_id(league_id)
+
+        all_matches = await self.match_repository.get_league_by_id(league_id)
+
+        mathces = [match for match in all_matches if match.status == 'finished']
+
+        standings = {}
+        for team in teams:
+            standings[str(team.id)] = {
+                "team_id": str(team.id),
+                "team_name": team.name,
+                "played": 0,
+                "won": 0,
+                "drawn": 0,
+                "lost": 0,
+                "goals_for": 0,
+                "goals_against": 0,
+                "goal_difference": 0,
+                "points": 0,
+            }
+
+        for match in matches:
+            home_id = str(match.home_team_id)
+            away_id = str(match.away_team_id)
+            
+            if home_id not in standings or away_id not in standings:
+                continue
+
+            home_score = match.home_score or 0
+            away_score = match.away_score or 0
+
+            standings[home_id]["played"] += 1
+            standings[away_id]["played"] += 1
