@@ -9,6 +9,7 @@ from fastapi.exception_handlers import http_exception_handler
 from src.api.routers.user import router as user_router
 from src.api.routers.league import router as league_router
 from src.api.routers.team import router as team_router
+from src.api.routers.match import router as match_router
 from src.container import Container
 from src.db import database, init_db
 
@@ -17,6 +18,7 @@ container.wire(modules=[
     "src.api.routers.user",
     "src.api.routers.league",
     "src.api.routers.team",
+    "src.api.routers.match",
 ])
 
 
@@ -33,6 +35,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(user_router, prefix="/auth")
 app.include_router(league_router, prefix="/leagues")
 app.include_router(team_router, prefix="/teams")
+app.include_router(match_router, prefix="/matches")
 
 
 @app.exception_handler(HTTPException)

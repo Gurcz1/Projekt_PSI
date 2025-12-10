@@ -1,11 +1,11 @@
 services:
   app:
     build:
-      context: leagueapi/
+      context: projekt/
     ports:
       - "8000:8000"
     volumes:
-      - ./leagueapi/src:/src
+      - ./projekt/src:/src
     command: [ "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000" ]
     environment:
       - DB_HOST=db

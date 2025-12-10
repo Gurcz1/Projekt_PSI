@@ -68,7 +68,7 @@ match_table = sqlalchemy.Table(
     ),
     sqlalchemy.Column("home_score", sqlalchemy.Integer, nullable=True),
     sqlalchemy.Column("away_score", sqlalchemy.Integer, nullable=True),
-    sqlalchemy.Column("date", sqlalchemy.DateTime),
+    sqlalchemy.Column("date", sqlalchemy.String),
     sqlalchemy.Column("status", sqlalchemy.String, default="scheduled"),
     sqlalchemy.Column(
         "submitted_by",

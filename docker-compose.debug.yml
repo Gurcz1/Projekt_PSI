@@ -1,9 +1,9 @@
 services:
   app:
     build:
-      context: leagueapi/
+      context: projekt/
     volumes:
-      - ./leagueapi/src:/src
+      - ./projekt/src:/src
     command:
       - "sh"
       - "-c"
