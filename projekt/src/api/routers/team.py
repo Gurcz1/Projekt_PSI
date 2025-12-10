@@ -49,21 +49,11 @@ async def create_team(
 
     return new_team.model_dump()
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1b531bd07331be965cc9d6b99d045f24c7cab3b2
 @router.get("/all", response_model=Iterable[Team], status_code=200)
 @inject
 async def get_all_teams(
     service: ITeamService = Depends(Provide[Container.team_service]),
 ) -> Iterable:
-<<<<<<< HEAD
-    
-    teams = await service.get_all_teams()
-    
-    return teams
-=======
     """Get all teams."""
     return await service.get_all_teams()
 
@@ -77,7 +67,6 @@ async def get_teams_by_league(
     """Get all teams in a league."""
     return await service.get_teams_by_league(league_id)
 
->>>>>>> 1b531bd07331be965cc9d6b99d045f24c7cab3b2
 
 @router.get("/{team_id}", response_model=Team, status_code=200)
 @inject
@@ -85,45 +74,6 @@ async def get_team_by_id(
     team_id: int,
     service: ITeamService = Depends(Provide[Container.team_service]),
 ) -> dict:
-<<<<<<< HEAD
-    
-    if team := await service.get_team_by_id(team_id=team_id):
-        return team.model_dump()
-
-    raise HTTPException(status_code=404, detail="Team not found")
-
-@router.get(
-    "/league/{league_id}",
-    response_model=list[Team],
-    status_code=200,
-)
-@inject
-async def get_team_by_league(
-    league_id: int,
-    service: ITeamService = Depends(Provide[Container.team_service]),
-) -> Iterable:
-    
-    teams = await service.get_teams_by_league(league_id)
-    
-    return teams
-
-@router.put("/{team_id}", response_model=Team, status_code=201)
-@inject
-async def update_team(
-    team_id: int,
-    updated_team: TeamIn,
-    service: ITeamService = Depends(Provide[Container.team_service]),
-) -> dict:
-    
-    if await service.get_team_by_id(team_id=team_id):
-        new_updated_team = await service.update_team(
-            team_id=team_id,
-            data=updated_team,
-        )
-        return new_updated_team.model_dump() if new_updated_team else {}
-    
-    raise HTTPException(status_code=404, detail="Team not found")
-=======
     """Get team by ID."""
     team = await service.get_team_by_id(team_id)
     
@@ -160,23 +110,12 @@ async def update_team(
     
     return updated_team.model_dump()
 
->>>>>>> 1b531bd07331be965cc9d6b99d045f24c7cab3b2
 
 @router.delete("/{team_id}", status_code=204)
 @inject
 async def delete_team(
     team_id: int,
     service: ITeamService = Depends(Provide[Container.team_service]),
-<<<<<<< HEAD
-) -> None:
-    
-    if await service.get_team_by_id(team_id=team_id):
-        await service.delete_team(team_id)
-        
-        return
-    
-    raise HTTPException(status_code=404, detail="Team not found")
-=======
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ) -> None:
     """Delete a team."""
@@ -193,4 +132,3 @@ async def delete_team(
 
     if not await service.delete_team(team_id):
         raise HTTPException(status_code=404, detail="Team not found")
->>>>>>> 1b531bd07331be965cc9d6b99d045f24c7cab3b2

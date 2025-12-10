@@ -1,7 +1,7 @@
 """Module containing league service abstractions."""
 
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Iterable, Any
 
 from src.core.domain.league import League, LeagueIn, LeagueBroker
 from src.infrastructure.dto.leaguedto import LeagueDTO
@@ -84,3 +84,7 @@ class ILeagueService(ABC):
     @abstractmethod
     async def get_archived_leagues(self) -> Iterable[LeagueDTO]:
         """Get all archived leagues."""
+        
+    @abstractmethod
+    async def get_standings(self, league_id: int) -> Iterable[Any]:
+        """Get league standings"""

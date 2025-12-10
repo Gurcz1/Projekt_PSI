@@ -162,7 +162,7 @@ class LeagueService(ILeagueService):
 
         all_matches = await self.match_repository.get_league_by_id(league_id)
 
-        mathces = [match for match in all_matches if match.status == 'finished']
+        matches = [match for match in all_matches if match.status == 'finished']
 
         standings = {}
         for team in teams:
@@ -191,3 +191,35 @@ class LeagueService(ILeagueService):
 
             standings[home_id]["played"] += 1
             standings[away_id]["played"] += 1
+            
+            standings[home_id]["goals_for"] += home_score
+            standings[home_id]["goals_against"] += away_score
+            standings[away_id]["goals_for"] += away_score
+            standings[away_id]["goals_against"] += home_score
+            
+            if home_score > away_score:
+                standings[home_id]["won"] += 1
+                standings[home_id]["points"] += 3
+                standings[away_id]["lost"] += 1
+            elif home_score < away_score:
+                standings[away_id]["won"] += 1
+                standings[away_id]["points"] += 3
+                standings[home_id]["lost"] += 1
+            else:
+                standings[home_id]["drawn"] += 1
+                standings[away_id]["drawn"] += 1
+                standings[home_id]["points"] += 1
+                standings[away_id]["points"] += 1
+                
+        for team_id in standings:
+            standings[team_id]["goal_difference"] = (
+                standings[team_id]["goals_for"] - standings[team_id]["goals_against"]
+            )
+            
+        sorted_standings = sorted(
+            standings.values(),
+            key=lambda x: (x["points"], x["goal_difference"], x["goals_for"]),
+            reverse=True,
+        )
+        
+        return sorted_standings

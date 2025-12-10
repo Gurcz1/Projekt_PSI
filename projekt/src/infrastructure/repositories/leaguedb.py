@@ -1,6 +1,8 @@
 """A database implementation of league repository."""
 
 from typing import Any, List
+
+from asyncpg import Record  # type: ignore
 from sqlalchemy import select, join
 
 from src.core.domain.league import LeagueBroker, LeagueStatus, League
@@ -207,7 +209,7 @@ class LeagueRepository(ILeagueRepository):
 
         return [LeagueDTO.from_record(league) for league in leagues]
 
-    async def _get_league_by_id(self, league_id: int) -> Record | None:
+    async def _get_league_by_id(self, league_id: int):
         """A private method getting league from the DB based on its ID.
         
         Args:

@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-from typing import Iterable
-
-from projekt.src.core.domain.match import Match, MatchIn
-from projekt.src.core.repositories.imatch import IMatchRepository
-from projekt.src.infrastructure.services.imatch import IMatchService
-
-class MatchService(IMatchService):
-    
-    _repository = IMatchRepository
-    
-    
-    def __init__(self, repository: IMatchRepository) -> None:
-        
-        self._repository = repository
-        
-=======
 """A service for match entity."""
 
 from typing import Any, Iterable
@@ -69,4 +52,3 @@ class MatchService(IMatchService):
         """The method deleting a match from the data storage."""
 
         return await self.repository.delete_match(match_id)
->>>>>>> 1b531bd07331be965cc9d6b99d045f24c7cab3b2

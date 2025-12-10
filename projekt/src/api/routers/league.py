@@ -9,7 +9,7 @@ from jose import jwt
 
 from src.infrastructure.utils import consts
 from src.container import Container
-from src.core.domain.league import LeagueIn, LeagueUpdate
+from src.core.domain.league import LeagueIn, LeagueUpdate, LeagueBroker, League
 from src.infrastructure.dto.leaguedto import LeagueDTO
 from src.infrastructure.services.ileague import ILeagueService
 from src.infrastructure.services.iteam import ITeamService
@@ -48,7 +48,6 @@ async def create_league(
     if not user_id:
         raise HTTPException(status_code=403, detail="Unauthorized")
 
-    from src.core.domain.league import LeagueBroker
     league_broker = LeagueBroker(**league.model_dump(), owner_id=int(user_id))
     new_league = await service.add_league(league_broker)
 
@@ -276,3 +275,14 @@ async def delete_league(
         return
 
     raise HTTPException(status_code=404, detail="League not found")
+
+@router.get("/{league_id}/standings", response_model=Iterable[League], status_code=200)
+@inject
+async def get_standings(
+    league_id: int,
+    service: ILeagueService = Depends(Provide[Container.league_service]),
+) -> Iterable:
+    
+    standings = await service.get_standings(league_id)
+    
+    return standings
