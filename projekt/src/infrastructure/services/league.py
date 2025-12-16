@@ -158,9 +158,9 @@ class LeagueService(ILeagueService):
 
     async def get_standings(self, league_id: int) -> Iterable[Any]:
 
-        teams = await self.team_repository.get_league_by_id(league_id)
+        teams = await self._team_repository.get_teams_by_league(league_id)
 
-        all_matches = await self.match_repository.get_league_by_id(league_id)
+        all_matches = await self._match_repository.get_matches_by_league(league_id)
 
         matches = [match for match in all_matches if match.status == 'finished']
 

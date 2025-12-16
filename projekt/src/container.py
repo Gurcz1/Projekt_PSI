@@ -27,6 +27,8 @@ class Container(DeclarativeContainer):
     league_service = Factory(
         LeagueService,
         repository=league_repository,
+        match_repository=match_repository,
+        team_repository=team_repository,
     )
     team_service = Factory(
         TeamService,

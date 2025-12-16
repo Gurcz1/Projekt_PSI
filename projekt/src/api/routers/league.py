@@ -276,12 +276,12 @@ async def delete_league(
 
     raise HTTPException(status_code=404, detail="League not found")
 
-@router.get("/{league_id}/standings", response_model=Iterable[League], status_code=200)
+@router.get("/{league_id}/standings", status_code=200)
 @inject
 async def get_standings(
     league_id: int,
     service: ILeagueService = Depends(Provide[Container.league_service]),
-) -> Iterable:
+) -> list:
     
     standings = await service.get_standings(league_id)
     
