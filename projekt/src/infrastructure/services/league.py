@@ -9,6 +9,7 @@ from src.core.repositories.ileague import ILeagueRepository
 from src.core.repositories.imatch import IMatchRepository
 from src.core.repositories.iteam import ITeamRepository
 from src.infrastructure.services.ileague import ILeagueService
+from src.core.domain.match import MatchIn
 
 
 class LeagueService(ILeagueService):
@@ -241,6 +242,23 @@ class LeagueService(ILeagueService):
         if len(teams) < 2:
             raise HTTPException(status_code=400, detail="Not enough teams to generate schedule")
 
-        
-
+        teams_list = list(teams)
+        n = len(teams_list)
+        matches = []
+    
+        for round in range(n - 1):
+            for i in range(n // 2):
+                home_idx = i
+                away_idx = n - 1 - i
+                
+                home_team = teams_list[home_idx]
+                away_team = teams_list[away_idx]
+                
+                match_in = MatchIn(
+                    league_id=league_id,
+                    home_team=home_team.id,
+                    away_team=away_team.id,
+                )
+                created_match = await self. _match_repository.create_match(match_in)
+                
         
