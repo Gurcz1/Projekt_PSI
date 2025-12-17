@@ -223,3 +223,24 @@ class LeagueService(ILeagueService):
         )
         
         return sorted_standings
+
+    async def generate_scheudle(self, league_id: int, user_id: int) -> Iterable[Any]:
+
+        league = await self._repository.get_by_id(league_id)
+        if not league:
+            raise HTTPException(status_code=404, detail="League not found")
+        
+        if league.owner.id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only the league owner can generate the schedule"
+            )
+
+        teams = await self._team_repository.get_teams_by_league(league_id)
+
+        if len(teams) < 2:
+            raise HTTPException(status_code=400, detail="Not enough teams to generate schedule")
+
+        
+
+        

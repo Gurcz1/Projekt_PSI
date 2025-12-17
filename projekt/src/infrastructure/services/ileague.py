@@ -88,3 +88,7 @@ class ILeagueService(ABC):
     @abstractmethod
     async def get_standings(self, league_id: int) -> Iterable[Any]:
         """Get league standings"""
+
+    @abstractmethod
+    async def generate_scheudle(self, league_id: int, user_id: int) -> Iterable[Any]:
+        """Generate league scheudle"""
